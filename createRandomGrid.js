@@ -5,6 +5,16 @@ var componentsSize2 = [2, 3];
 var componentsSize3 = [3, 2];
 var componentsSize4 = [4, 1];
 
+ /*([x,y] é diferente em cada linha)
+
+ ComponentSize1 = [x, y];
+ ComponentSize2 = [x, y] e [z, m]. Onde [z, m] pode ser: [x + 1, y], [x, y + 1], [x - 1, y] e [x, y - 1]
+ ComponentSize3 = ComponentSize2 e [x, y]
+ ComponentSize4 = ComponentSize3 e [x,y]
+  */ 
+ 
+
+
 for(var i=0; i<10; i++) {
     matrix[i] = new Array(10);
 }
@@ -16,7 +26,8 @@ for(let i = 0; i < 10; i++){
 }
 
 
-drawOneComponent(componentsSize1, matrix, forbidPosition);
+createComponentSize1(componentsSize1, matrix, forbidPosition);
+createComponentSize2(componentsSize2, matrix, forbidPosition);
 
 let myString = "";
 for(let i = 0; i < 10; i++){
@@ -29,61 +40,89 @@ for(let i = 0; i < 10; i++){
 console.log(myString);
 
 
+function createComponentSize2(componentsSize2, matrix, forbidPosition){
+    while(componentsSize2[1] > 0){
+        let randomNum1 = Math.floor(Math.random() * 10);
+        let randomNum2 = Math.floor(Math.random() * 10);
+        let component2 = [[randomNum1, randomNum2]];
+   
+        if(Math.random() >= 0.5){
+        component2.push([randomNum1 + 1, randomNum2])
+        }else {
+            component2.push([randomNum1, randomNum2 + 1])
+        }
 
-function drawOneComponent(componentsSize1, matrix, forbidPosition){
+        if((!(containArray(forbidPosition, component2[0])))
+            && !(containArray(forbidPosition, component2[1]))){
+
+            matrix[component2[0][0]][component2[0][1]] = componentsSize2[0];
+            matrix[component2[1][0]][component2[1][1]] = componentsSize2[0];
+            pushForbid(forbidPosition, component2[0]);
+            pushForbid(forbidPosition, component2[1]);
+            componentsSize2[1]--;
+        }
+    }
+    
+}
+
+function createComponentSize1(componentsSize1, matrix, forbidPosition){
     while(componentsSize1[1] > 0){
         let randomNum1 = Math.floor(Math.random() * 10);
         let randomNum2 = Math.floor(Math.random() * 10);
         if(!(containArray(forbidPosition, [randomNum1, randomNum2]))){
-            forbidPosition.push([randomNum1, randomNum2]);
-            if(randomNum1 < 9 && randomNum1 > 0){
-                forbidPosition.push([randomNum1 + 1, randomNum2]);
-                forbidPosition.push([randomNum1 - 1, randomNum2]);
-            }else if(randomNum1 < 9){
-                forbidPosition.push([randomNum1 + 1, randomNum2]);
-            }else if(randomNum1 > 0){
-                forbidPosition.push([randomNum1 - 1, randomNum2]);
-            }
-    
-            if(randomNum2 < 9 && randomNum2 > 0){
-                forbidPosition.push([randomNum1, randomNum2 + 1]);
-                forbidPosition.push([randomNum1, randomNum2 - 1]);
-            }else if(randomNum2 < 9){
-                forbidPosition.push([randomNum1, randomNum2 + 1]);
-            }else if(randomNum2 > 0){
-                forbidPosition.push([randomNum1, randomNum2 - 1]);
-            }
-    
-             if((randomNum1 < 9 && randomNum2 < 9) && (randomNum1 > 0 && randomNum2 > 0)){
-                forbidPosition.push([randomNum1 + 1, randomNum2 + 1]);
-                forbidPosition.push([randomNum1 - 1, randomNum2 - 1]);
-                forbidPosition.push([randomNum1 + 1, randomNum2 - 1]);
-                forbidPosition.push([randomNum1 - 1, randomNum2 + 1]);
-            }else if((randomNum1 < 9 && randomNum2 < 9) && randomNum1 > 0){
-                forbidPosition.push([randomNum1 + 1, randomNum2 + 1]);
-                forbidPosition.push([randomNum1 - 1, randomNum2 + 1]);
-    
-            }else if((randomNum1 < 9 && randomNum2 < 9) && randomNum2 > 0){
-                forbidPosition.push([randomNum1 + 1, randomNum2 + 1]);
-                forbidPosition.push([randomNum1 + 1, randomNum2 - 1]);
-            }else if((randomNum1 > 0 && randomNum2 > 0) && randomNum1 < 9){
-                forbidPosition.push([randomNum1 - 1, randomNum2 - 1]);
-                forbidPosition.push([randomNum1 + 1, randomNum2 - 1]);
-    
-            }else if((randomNum1 > 0 && randomNum2 > 0) && randomNum2 < 9){
-                forbidPosition.push([randomNum1 - 1, randomNum2 - 1]);
-                forbidPosition.push([randomNum1 - 1, randomNum2 + 1]);
-            }else if(!(randomNum1 > 0 || randomNum2 > 0)){
-                forbidPosition.push([randomNum1 + 1, randomNum2 + 1]);
-            }else if(!(randomNum1 < 9 || randomNum2 < 9)){
-                forbidPosition.push([randomNum1 - 1, randomNum2 - 1]);
-            } 
-    
+
             matrix[randomNum1][randomNum2] = componentsSize1[0];
+            pushForbid(forbidPosition, [randomNum1, randomNum2]);
             componentsSize1[1]--;
         }  
     }
 } 
+
+function pushForbid(forbidPosition, [randomNum1, randomNum2]){
+    forbidPosition.push([randomNum1, randomNum2]);
+    if(randomNum1 < 9 && randomNum1 > 0){
+        forbidPosition.push([randomNum1 + 1, randomNum2]);
+        forbidPosition.push([randomNum1 - 1, randomNum2]);
+    }else if(randomNum1 < 9){
+        forbidPosition.push([randomNum1 + 1, randomNum2]);
+    }else if(randomNum1 > 0){
+        forbidPosition.push([randomNum1 - 1, randomNum2]);
+    }
+
+    if(randomNum2 < 9 && randomNum2 > 0){
+        forbidPosition.push([randomNum1, randomNum2 + 1]);
+        forbidPosition.push([randomNum1, randomNum2 - 1]);
+    }else if(randomNum2 < 9){
+        forbidPosition.push([randomNum1, randomNum2 + 1]);
+    }else if(randomNum2 > 0){
+        forbidPosition.push([randomNum1, randomNum2 - 1]);
+    }
+
+     if((randomNum1 < 9 && randomNum2 < 9) && (randomNum1 > 0 && randomNum2 > 0)){
+        forbidPosition.push([randomNum1 + 1, randomNum2 + 1]);
+        forbidPosition.push([randomNum1 - 1, randomNum2 - 1]);
+        forbidPosition.push([randomNum1 + 1, randomNum2 - 1]);
+        forbidPosition.push([randomNum1 - 1, randomNum2 + 1]);
+    }else if((randomNum1 < 9 && randomNum2 < 9) && randomNum1 > 0){
+        forbidPosition.push([randomNum1 + 1, randomNum2 + 1]);
+        forbidPosition.push([randomNum1 - 1, randomNum2 + 1]);
+
+    }else if((randomNum1 < 9 && randomNum2 < 9) && randomNum2 > 0){
+        forbidPosition.push([randomNum1 + 1, randomNum2 + 1]);
+        forbidPosition.push([randomNum1 + 1, randomNum2 - 1]);
+    }else if((randomNum1 > 0 && randomNum2 > 0) && randomNum1 < 9){
+        forbidPosition.push([randomNum1 - 1, randomNum2 - 1]);
+        forbidPosition.push([randomNum1 + 1, randomNum2 - 1]);
+
+    }else if((randomNum1 > 0 && randomNum2 > 0) && randomNum2 < 9){
+        forbidPosition.push([randomNum1 - 1, randomNum2 - 1]);
+        forbidPosition.push([randomNum1 - 1, randomNum2 + 1]);
+    }else if(!(randomNum1 > 0 || randomNum2 > 0)){
+        forbidPosition.push([randomNum1 + 1, randomNum2 + 1]);
+    }else if(!(randomNum1 < 9 || randomNum2 < 9)){
+        forbidPosition.push([randomNum1 - 1, randomNum2 - 1]);
+    } 
+}
 
 function containArray(forbidArray, arr){
     if(forbidArray.some((e)=>{
